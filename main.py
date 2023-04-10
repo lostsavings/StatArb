@@ -78,6 +78,7 @@ def main():
     for ticker_a, ticker_b in tickers_product:
         if ticker_a == ticker_b:
             continue
+        print (f"{ticker_a},{ticker_b}")
         corr = n_day_correlation(df_full, ticker_a, ticker_b, 60)
         df_new = pd.DataFrame([{
             'ticker_a': ticker_a,
