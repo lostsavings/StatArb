@@ -1,18 +1,18 @@
+from itertools import combinations
 import os
 import pandas as pd
 import requests
 from datetime import date, timedelta
 
 
-def get_history(tickers):
+def get_history(ticker):
     """Pull ticker history from ORAT api."""
-    tickers_fmt = ','.join(tickers)
     url = 'https://api.orats.io/datav2/hist/cores'
     params = {
         'token': '8ea8d461-2ce6-4bac-bf67-3f24647efbad',
-        'ticker': tickers_fmt,
+        'ticker': ticker, 
         # TODO: add trade dates?
-        'fields': 'ticker,tradeDate,iv30d,mktWidth'
+        'fields': 'ticker,tradeDate,iv30d,mktWidth,sector,sectorName'
     }
     res = requests.get(url, params=params)
     res.raise_for_status()
@@ -40,27 +40,55 @@ def n_day_correlation(df_full, ticker_a, ticker_b, days):
     df_ts_a = get_ts(df_full, ticker_a, start_date)
     df_ts_b = get_ts(df_full, ticker_b, start_date)
     df = df_ts_a.merge(df_ts_b, on='tradeDate')
-    print(df)
     df.drop(['tradeDate'], axis=1, inplace=True)
     corr = df['iv30d_x'].corr(df['iv30d_y'])
     return corr
 
 
 def main():
-    today = date.today()
-    history_path = os.path.join('output', f'orat_api_result_{today}.csv')
+    tickers = get_tickers()
+    df_full_path = os.path.join('output', 'full.csv')
 
-    if not os.path.exists(history_path):
-        # we do not have today's data, fetch it
-        tickers = get_tickers()
-        history = get_history(tickers)
-        df = pd.DataFrame(history)
-        df.to_csv(history_path, index=False)
+    if not os.path.exists(df_full_path):
+        df_full = pd.DataFrame()
+        for ticker in tickers:
+            history_path = os.path.join('output', f'orat_api_result_{ticker}.csv')
+
+            if not os.path.exists(history_path):
+                # we do not have today's data, fetch it
+                history = get_history(ticker)
+                df = pd.DataFrame(history)
+                df.to_csv(history_path, index=False)
+            else:
+                df = pd.read_csv(history_path)
+            
+            df_full = pd.concat([df_full, df])
+        
+        df_full.to_csv(df_full_path, index=False)
     else:
-        # we do have today's data, load it from disk
-        df = pd.read_csv(history_path)
-    
-    print(n_day_correlation(df, 'AA', 'AAPL', 60))
+        df_full = pd.read_csv(df_full_path)
+
+    tickers = list(df_full.ticker.unique())
+    # : uncomment this for sanity check
+    # tickers = ['AA', 'GOOG']
+
+    tickers_product = combinations(tickers, r=2)
+
+    df_corr = pd.DataFrame()
+    for ticker_a, ticker_b in tickers_product:
+        if ticker_a == ticker_b:
+            continue
+        corr = n_day_correlation(df_full, ticker_a, ticker_b, 60)
+        df_new = pd.DataFrame([{
+            'ticker_a': ticker_a,
+            'ticker_b': ticker_b,
+            'corr': corr
+        }])
+        df_corr = pd.concat([df_corr, df_new])
+
+    corr_path = os.path.join('output', 'corr.csv')
+    df_corr.to_csv(corr_path, index=False)
+
 
 if __name__ == '__main__':
     main()
