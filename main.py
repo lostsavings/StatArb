@@ -68,26 +68,11 @@ def n_day_correlation(df_full, ticker_a, ticker_b, days):
 
 def main():
     tickers = get_tickers()
-    df_full_path = os.path.join('output', 'full.csv')
-
-    if not os.path.exists(df_full_path):
-        df_full = pd.DataFrame()
-        for ticker in tickers:
-            history_path = os.path.join('output', f'orat_api_result_{ticker}.csv')
-
-            if not os.path.exists(history_path):
-                # we do not have today's data, fetch it
-                history = get_history(ticker)
-                df = pd.DataFrame(history)
-                df.to_csv(history_path, index=False)
-            else:
-                df = pd.read_csv(history_path)
-
-            df_full = pd.concat([df_full, df])
-
-        df_full.to_csv(df_full_path, index=False)
-    else:
-        df_full = pd.read_csv(df_full_path)
+    df_full = pd.DataFrame()
+    for ticker in tickers:
+        history = get_history(ticker)
+        df = pd.DataFrame(history)
+        df_full = pd.concat([df_full, df])
 
     with get_db_con() as con:
         df_full.to_sql('history', con, if_exists='replace', index=False)
@@ -110,9 +95,6 @@ def main():
             'corr': corr
         }])
         df_corr = pd.concat([df_corr, df_new])
-
-    corr_path = os.path.join('output', 'corr.csv')
-    df_corr.to_csv(corr_path, index=False)
 
     with get_db_con() as con:
         df_corr.to_sql('corr', con, if_exists='replace', index=False)
