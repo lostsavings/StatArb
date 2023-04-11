@@ -1,5 +1,9 @@
 import pandas as pd
-from utils import get_db_con
+from db import get_db_con
+
+
+def get_comparison(ta, tb):
+    """Compare two tickers (ta, tb)."""
 
 
 if __name__ == '__main__':

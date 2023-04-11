@@ -3,7 +3,7 @@ import pandas as pd
 import requests
 from datetime import date, timedelta
 
-from utils import get_db_con
+from db import get_db_con
 
 
 def get_history(ticker):
