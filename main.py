@@ -41,7 +41,9 @@ def get_history(ticker):
 def get_tickers():
     """Load list of tickers to fetch data for."""
     with open('tickers.txt', 'r') as f:
-        return [e.strip() for e in f.readlines()]
+        tickers = [e.strip() for e in f.readlines()]
+        # prevent duplicates
+        return list(set(tickers))
 
 
 def get_ts(df_full: pd.DataFrame, ticker: str, start_date: date):
