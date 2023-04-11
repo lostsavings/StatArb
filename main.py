@@ -1,8 +1,27 @@
+import yaml
 from itertools import combinations
 import os
 import pandas as pd
 import requests
 from datetime import date, timedelta
+from sqlalchemy import create_engine, URL
+
+
+def get_psql_config():
+    config_path = os.path.join('configs', 'psql.yaml')
+    with open(config_path, 'r') as f:
+        return yaml.safe_load(f)
+
+
+PSQL_CONFIG = get_psql_config()
+
+
+def get_db_con():
+    url = URL.create(
+        "postgresql+psycopg2",
+        **PSQL_CONFIG
+    )
+    return create_engine(url, echo=True).connect()
 
 
 def get_history(ticker):
@@ -10,7 +29,7 @@ def get_history(ticker):
     url = 'https://api.orats.io/datav2/hist/cores'
     params = {
         'token': '8ea8d461-2ce6-4bac-bf67-3f24647efbad',
-        'ticker': ticker, 
+        'ticker': ticker,
         # TODO: add trade dates?
         'fields': 'ticker,tradeDate,iv30d,mktWidth,sector,sectorName'
     }
@@ -61,12 +80,15 @@ def main():
                 df.to_csv(history_path, index=False)
             else:
                 df = pd.read_csv(history_path)
-            
+
             df_full = pd.concat([df_full, df])
-        
+
         df_full.to_csv(df_full_path, index=False)
     else:
         df_full = pd.read_csv(df_full_path)
+
+    with get_db_con() as con:
+        df_full.to_sql('history', con, if_exists='replace', index=False)
 
     tickers = list(df_full.ticker.unique())
     # : uncomment this for sanity check
@@ -89,6 +111,9 @@ def main():
 
     corr_path = os.path.join('output', 'corr.csv')
     df_corr.to_csv(corr_path, index=False)
+
+    with get_db_con() as con:
+        df_corr.to_sql('corr', con, if_exists='replace', index=False)
 
 
 if __name__ == '__main__':
