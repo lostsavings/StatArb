@@ -1,12 +1,20 @@
 import os
+import click
 import pandas as pd
+from datetime import date, timedelta
 
 
-def get_correlation(df_full: pd.DataFrame) -> pd.DataFrame:
+@click.command()
+@click.option('--n-days', default=60, help='Number of days of history when checking correlation.')
+def get_correlation(n_days: int) -> pd.DataFrame:
     """
-    Given a dataframe with results for all tickers from the ORATS api, create a correlation dataframe.
+    Use saved ORAT data to get correlation between all tickers over the last n days
     """
-    df = df_full.copy()
+    df = pd.read_csv(os.path.join('output', 'full.csv'))
+
+    df['tradeDate'] = pd.to_datetime(df['tradeDate'])
+    start_date = df['tradeDate'].max() - timedelta(days=n_days)
+    df = df[df['tradeDate'] >= start_date].reset_index(drop=True)
 
     df = df.pivot(values=['iv30d'], index=['tradeDate'], columns=['ticker']).reset_index()
 
@@ -18,10 +26,10 @@ def get_correlation(df_full: pd.DataFrame) -> pd.DataFrame:
     df.drop('tradeDate', axis=1, inplace=True)
 
     df = df.corr('pearson')
+
+    df.to_csv(os.path.join('output', 'correlation.csv'))
     return df
 
 
 if __name__ == '__main__':
-    df = pd.read_csv(os.path.join('output', 'full.csv'))
-    df_corr = get_correlation(df)
-    df_corr.to_csv(os.path.join('output', 'correlation.csv'))
+    get_correlation()
