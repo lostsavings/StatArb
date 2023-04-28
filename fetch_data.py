@@ -42,7 +42,7 @@ def fetch_data(save_db):
         with get_db_con() as con:
             df_full.to_sql('history', con, if_exists='replace', index=False)
 
-    df_full.to_csv(os.path.join('output', 'full.csv'))
+    df_full.to_csv(os.path.join('output', 'full.csv'), index=False)
 
 
 if __name__ == '__main__':

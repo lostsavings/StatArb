@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>StatArb</title>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script>
+      fetch('/output/comparison_svg_paths.json')
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById('container')
+          data.forEach(src => {
+            const img = document.createElement('img')
+            img.src = src
+            img.style.width = '32%'
+            img.style.display = 'inline-block'
+            container.appendChild(img)
+          })
+        })
+    </script>
+  </body>
+</html>

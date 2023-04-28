@@ -25,11 +25,11 @@ python correlation.py --n-days 60
 ```
 
 ## [`comparison.py`](./comparison.py)
-Contains functionality for comparing two tickers.
-Ideally we will run this for only relevant ticker combinations, based on the correlations.
+Compares ticker combinations over a certain correlation threshold. Generates graphics for top 10 zscored comparisons (at the latest date).
 ```bash
-python comparison.py
+python comparison.py --corr-cutoff 0.95
 ```
-Writes 2 files:
-1. `output/comparisons/csv/{ticker_a}_{ticker_b}.csv`: Contains dataframe result of comparison.
-2. `output/comparisons/svg/{ticker_a}_{ticker_b}.svg`: Contains plot showing comparison.
+Writes files:
+1. `output/comparisons/csv/{ticker_a}_{ticker_b}.csv`: Contains dataframe results of comparisons.
+2. `output/comparisons/svg/{ticker_a}_{ticker_b}.svg`: Contains plots showing comparisons.
+3. `output/comparison_svg_paths.json`: Used by dashboard to load images.
