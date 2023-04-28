@@ -1,27 +1,11 @@
-import yaml
-from itertools import combinations
 import os
+import click
+from itertools import combinations
 import pandas as pd
 import requests
 from datetime import date, timedelta
-from sqlalchemy import create_engine, URL
 
-
-def get_psql_config():
-    config_path = os.path.join('configs', 'psql.yaml')
-    with open(config_path, 'r') as f:
-        return yaml.safe_load(f)
-
-
-PSQL_CONFIG = get_psql_config()
-
-
-def get_db_con():
-    url = URL.create(
-        "postgresql+psycopg2",
-        **PSQL_CONFIG
-    )
-    return create_engine(url, echo=True).connect()
+from db import get_db_con
 
 
 def get_history(ticker):
@@ -31,7 +15,7 @@ def get_history(ticker):
         'token': '8ea8d461-2ce6-4bac-bf67-3f24647efbad',
         'ticker': ticker,
         # TODO: add trade dates?
-        'fields': 'ticker,tradeDate,iv30d,mktWidth,sector,sectorName'
+        'fields': 'ticker,tradeDate,iv30d,mktWidthVol,sector,sectorName'
     }
     res = requests.get(url, params=params)
     res.raise_for_status()
@@ -66,7 +50,9 @@ def n_day_correlation(df_full, ticker_a, ticker_b, days):
     return corr
 
 
-def main():
+@click.command()
+@click.option('--save-db', is_flag=True, help='Set this flag to save results to the database')
+def main(save_db):
     tickers = get_tickers()
     df_full = pd.DataFrame()
     for ticker in tickers:
@@ -74,8 +60,11 @@ def main():
         df = pd.DataFrame(history)
         df_full = pd.concat([df_full, df])
 
-    with get_db_con() as con:
-        df_full.to_sql('history', con, if_exists='replace', index=False)
+    if save_db:
+        with get_db_con() as con:
+            df_full.to_sql('history', con, if_exists='replace', index=False)
+
+    df_full.to_csv(os.path.join('output', 'full.csv'))
 
     tickers = list(df_full.ticker.unique())
     # : uncomment this for sanity check
@@ -87,7 +76,6 @@ def main():
     for ticker_a, ticker_b in tickers_product:
         if ticker_a == ticker_b:
             continue
-        print (f"{ticker_a},{ticker_b}")
         corr = n_day_correlation(df_full, ticker_a, ticker_b, 60)
         df_new = pd.DataFrame([{
             'ticker_a': ticker_a,
@@ -96,9 +84,11 @@ def main():
         }])
         df_corr = pd.concat([df_corr, df_new])
 
-    with get_db_con() as con:
-        df_corr.to_sql('corr', con, if_exists='replace', index=False)
+    if save_db:
+        with get_db_con() as con:
+            df_corr.to_sql('corr', con, if_exists='replace', index=False)
 
+    df_corr.to_csv(os.path.join('output', 'corr.csv'))
 
 if __name__ == '__main__':
     main()
