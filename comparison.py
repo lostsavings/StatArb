@@ -6,13 +6,13 @@ import datetime
 import matplotlib.pyplot as plt
 
 
-def get_comparison(df2: pd.DataFrame, ticker_a, ticker_b):
+def get_comparison(df: pd.DataFrame, ticker_a, ticker_b):
     """
     Compare two tickers.
     Return plots and metrics.
     """
     # filter down to only provided tickers
-    df = df2[df2['ticker'].isin([ticker_a, ticker_b])]
+    df = df[df['ticker'].isin([ticker_a, ticker_b])]
     df.reset_index(drop=True, inplace=True)
 
     cols_to_keep = ['ticker','tradeDate','iv30d','mktWidthVol']
