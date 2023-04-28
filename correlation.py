@@ -4,6 +4,16 @@ import pandas as pd
 from datetime import date, timedelta
 
 
+def format_tickers(r):
+    """
+    Create a string of "ticker_a,ticker_b" (tickers ordered alphabetically) for a given row.
+    Used to drop duplicate combos after df.corr.
+    """
+    ordered = [r.ticker_a, r.ticker_b]
+    ordered.sort()
+    return ','.join(ordered)
+
+
 @click.command()
 @click.option('--n-days', default=60, help='Number of days of history when checking correlation.')
 def get_correlation(n_days: int) -> pd.DataFrame:
@@ -27,7 +37,20 @@ def get_correlation(n_days: int) -> pd.DataFrame:
 
     df = df.corr('pearson')
 
-    df.to_csv(os.path.join('output', 'correlation.csv'))
+    # convert to long format
+    df.reset_index(inplace=True)
+    df = df.melt(id_vars='index', var_name='ticker_b', value_name='correlation')
+    df.rename({'index': 'ticker_a'}, axis=1, inplace=True)
+
+    # remove rows that will always be correlation 1
+    df = df.query('ticker_a != ticker_b')
+    df.sort_values('correlation', inplace=True, ascending=False)
+
+    # remove AA,BB - BB,AA duplicates created by df.corr
+    df['tickers_formatted'] = df.apply(format_tickers, axis=1)
+    df = df.drop_duplicates('tickers_formatted')
+
+    df.to_csv(os.path.join('output', 'correlation.csv'), index=False)
     return df
 
 
