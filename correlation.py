@@ -49,6 +49,7 @@ def get_correlation(n_days: int) -> pd.DataFrame:
     # remove AA,BB - BB,AA duplicates created by df.corr
     df['tickers_formatted'] = df.apply(format_tickers, axis=1)
     df = df.drop_duplicates('tickers_formatted')
+    df.drop('tickers_formatted', axis=1, inplace=True)
 
     df.to_csv(os.path.join('output', 'correlation.csv'), index=False)
     return df
