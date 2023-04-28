@@ -10,18 +10,19 @@ database: stat_arb
 
 # Scripts
 ## [`fetch_data.py`](./fetch_data.py)
-Used to pull data from ORATS and create correlations between all tickers stored in `tickers.txt`.
-Takes forever because:
-1. We're making one api call per ticker.
-2. Computing the correlation just takes forever.
+Used to pull data from ORATS for all tickers stored in `tickers.txt`. We're making one api call per ticker.
 ```bash
 python fetch_data.py
 # Or, if you want to save to the db as well as local files...
 python fetch_data.py --save-db
 ```
-Writes two files:
-1. `output/full.csv`: entire ticker history
-2. `output/corr.csv`:
+Writes full ticker history to `output/full.csv`.
+
+## [`correlation.py`](./correlation.py)
+Computes correlation for all tickers and writes to `output/correlation.csv`
+```bash
+python correlation.py --n-days 60
+```
 
 ## [`comparison.py`](./comparison.py)
 Contains functionality for comparing two tickers.
