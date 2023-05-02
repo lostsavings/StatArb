@@ -21,7 +21,7 @@ const options: Ref<ChartOptions> = ref({
   backgroundColor: 'transparent',
   plugins: {
     legend: {
-      position: 'bottom'
+      display: false
     }
   }
 })
