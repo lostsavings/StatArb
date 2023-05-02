@@ -60,7 +60,7 @@ def plot_comparison(df: pd.DataFrame, ticker_a, ticker_b):
 
 
 def get_comparison_output_path(ticker_a, ticker_b):
-    return os.path.join('frontend', 'static', 'data', 'tickers', f'{ticker_a}_{ticker_b}.json')
+    return os.path.join('frontend', 'public', 'data', 'tickers', f'{ticker_a}_{ticker_b}.json')
 
 
 @click.command()
@@ -81,14 +81,15 @@ def run_comparisons(corr_cutoff):
         zscore = df_comp['zScore_'].iloc[-1]
         new_row = pd.DataFrame([{'ticker_a': ticker_a, 'ticker_b': ticker_b, 'zscore': zscore}])
         df_zscores = pd.concat([df_zscores, new_row])
+        df_comp['tradeDate_'] = df_comp['tradeDate_'].dt.strftime('%Y-%m-%d')
 
-        df_comp.to_json(get_comparison_output_path(ticker_a, ticker_b), orient='records')
+        df_comp.to_json(get_comparison_output_path(ticker_a, ticker_b), orient='records', date_format='iso')
 
     # take top 10 zscores and create a json list containing them
     df_zscores.sort_values('zscore', ascending=False, inplace=True)
     df_zscores = df_zscores[:10]
     comparison_pairs = df_zscores[['ticker_a', 'ticker_b']]
-    comparison_list_path = os.path.join('frontend', 'static', 'data', 'comparison_list.json')
+    comparison_list_path = os.path.join('frontend', 'public', 'data', 'comparison_list.json')
     comparison_pairs.to_json(comparison_list_path, orient='records')
 
 

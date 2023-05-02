@@ -1,9 +1,8 @@
-
 <template>
   <div>
     <h1 class="text-center">{{ tickerA }} - {{ tickerB }}</h1>
     <div>
-      <Timeseries v-if="chartData" :chartData="chartData" class="h-96" />
+      <Timeseries v-if="chartData" :chartData="chartData" class="h-72"/>
     </div>
   </div>
 </template>

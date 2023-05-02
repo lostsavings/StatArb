@@ -25,19 +25,15 @@ python correlation.py --n-days 60
 ```
 
 ## [`comparison.py`](./comparison.py)
-Compares ticker combinations over a certain correlation threshold. Generates graphics for top 10 zscored comparisons (at the latest date).
+Compares ticker combinations over a certain correlation threshold. Generates formatted data and puts it in the `frontend/static/data` folder
 ```bash
 python comparison.py --corr-cutoff 0.95
 ```
-Writes files:
-1. `output/comparisons/csv/{ticker_a}_{ticker_b}.csv`: Contains dataframe results of comparisons.
-2. `output/comparisons/svg/{ticker_a}_{ticker_b}.svg`: Contains plots showing comparisons.
-3. `output/comparison_svg_paths.json`: Used by dashboard to load images.
-
 
 # Running the dashboard
 ```bash
-# in the root project directory...
-python -m http.server 8000
+# in the frontend directory
+npm i
+npm run dev
 ```
-Go to http://localhost:8000/dashboard.html
+Go to http://localhost:3000
