@@ -25,7 +25,7 @@ python correlation.py --n-days 60
 ```
 
 ## [`comparison.py`](./comparison.py)
-Compares ticker combinations over a certain correlation threshold. Generates formatted data and puts it in the `frontend/static/data` folder
+Compares ticker combinations over a certain correlation threshold. Generates formatted data and puts it in the `frontend/public/data` folder
 ```bash
 python comparison.py --corr-cutoff 0.95
 ```
