@@ -60,7 +60,7 @@ def plot_comparison(df: pd.DataFrame, ticker_a, ticker_b):
 
 
 def get_comparison_output_path(ticker_a, ticker_b):
-    return os.path.join('frontend', 'public', 'data', 'tickers', f'{ticker_a}_{ticker_b}.json')
+    return os.path.join('output', 'app_data', 'comparisons', f'{ticker_a}_{ticker_b}.json')
 
 
 @click.command()
@@ -89,7 +89,7 @@ def run_comparisons(corr_cutoff):
     df_zscores.sort_values('zscore', ascending=False, inplace=True)
     df_zscores = df_zscores[:10]
     comparison_pairs = df_zscores[['ticker_a', 'ticker_b']]
-    comparison_list_path = os.path.join('frontend', 'public', 'data', 'comparison_list.json')
+    comparison_list_path = os.path.join('output', 'app_data', 'comparison_list.json')
     comparison_pairs.to_json(comparison_list_path, orient='records')
 
 

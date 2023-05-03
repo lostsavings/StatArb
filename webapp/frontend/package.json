@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "chart.js": "^4.3.0",
+    "firebase": "^9.21.0",
     "vue-chartjs": "^5.2.0"
   }
 }
