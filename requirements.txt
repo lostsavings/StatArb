@@ -5,3 +5,4 @@ pyyaml
 SQLAlchemy
 click
 matplotlib
+firebase-admin

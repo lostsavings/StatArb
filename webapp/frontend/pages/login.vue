@@ -22,7 +22,6 @@ const route = useRoute()
 
 const email = ref('')
 const password = ref('')
-
 const errMessage = ref('')
 
 function submit() {
