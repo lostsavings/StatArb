@@ -26,7 +26,7 @@ def get_correlation(n_days: int) -> pd.DataFrame:
     start_date = df['tradeDate'].max() - timedelta(days=n_days)
     df = df[df['tradeDate'] >= start_date].reset_index(drop=True)
 
-    df = df.pivot(values=['iv30d'], index=['tradeDate'], columns=['ticker']).reset_index()
+    df = df.pivot(values=['orIvXern20d'], index=['tradeDate'], columns=['ticker']).reset_index()
 
     # convert from multindex back to flat column names
     df.columns = df.columns.to_flat_index()
