@@ -1,16 +1,14 @@
 <template>
-  <form class="text-center mt-14" @submit.prevent="submit">
-    <label for="email">Email</label>
-    <br>
-    <input v-model="email" id="email" type="email" class="bg-slate-200 rounded" required>
-    <br>
-    <label for="password">Password</label>
-    <br>
-    <input v-model="password" id="password" type="password" class="bg-slate-200 rounded" required>
-    <br>
-    <button type="submit" class="bg-slate-300 rounded mt-3 px-3 py-1">Submit</button>
-    <p class="text-red-500 mt-8">{{ errMessage }}</p>
-  </form>
+  <div class="text-center">
+    <form class="text-left mt-10 p-5 mx-auto w-80 rounded shadow" @submit.prevent="submit">
+      <div class="space-y-3">
+        <InputWrapper v-model="email" label="Email" type="email" required />
+        <InputWrapper v-model="password" label="Password" type="password" required />
+      </div>
+      <button type="submit" class="signature-gradient rounded py-2 mt-5 block w-full ">Log In</button>
+      <p v-if="errMessage" class="text-red-400 mt-2">{{ errMessage }}</p>
+    </form>
+  </div>
 </template>
 
 <script setup lang="ts">
