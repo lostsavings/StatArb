@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-    <form class="text-left mt-10 p-5 mx-auto w-80 rounded shadow" @submit.prevent="submit">
+    <form class="text-left mt-10 p-5 mx-auto w-80" @submit.prevent="submit">
       <div class="space-y-3">
         <InputWrapper v-model="email" label="Email" type="email" required />
         <InputWrapper v-model="password" label="Password" type="password" required />
