@@ -1,6 +1,6 @@
 <template>
-<div class="text-center pt-28">
-  <div class="max-w-prose mx-auto">
+<div class="text-center pt-20">
+  <div class="max-w-prose mx-auto px-5">
     <h1 class="text-5xl">
       <span class="italic">Finally,</span>
       Investment Strategies and Tools that
@@ -9,9 +9,15 @@
     </h1>
 
     <NuxtLink
-      type="submit"
+      to="/signup"
+      class="signature-gradient rounded-full py-5 mt-16 tracking-widest font-bold text-2xl uppercase block w-52 mx-auto"
+    >
+      Sign Up
+    </NuxtLink>
+
+    <NuxtLink
       to="/login"
-      class="signature-gradient rounded-full py-5 px-12 mt-16 tracking-widest font-extrabold text-2xl uppercase block w-52 mx-auto"
+      class="mt-5 text-lg uppercase block w-52 mx-auto"
     >
       Log In
     </NuxtLink>
