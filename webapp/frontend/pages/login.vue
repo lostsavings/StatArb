@@ -30,7 +30,7 @@ function submit() {
       if (Array.isArray(redirect)) {
         redirect = redirect[0]
       }
-      const r = redirect || '/'
+      const r = redirect || '/home'
       navigateTo(r)
     })
     .catch(err => {
