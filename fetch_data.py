@@ -13,7 +13,7 @@ def get_history(ticker):
         'token': '8ea8d461-2ce6-4bac-bf67-3f24647efbad',
         'ticker': ticker,
         # TODO: add trade dates?
-        'fields': 'ticker,tradeDate,iv30d,mktWidthVol,sector,sectorName'
+        'fields': 'ticker,tradeDate,orIvXern20d,mktWidthVol,sector,sectorName'
     }
     res = requests.get(url, params=params)
     res.raise_for_status()

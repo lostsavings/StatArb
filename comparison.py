@@ -17,7 +17,7 @@ def get_comparison(df: pd.DataFrame, ticker_a, ticker_b):
     df = df[df['ticker'].isin([ticker_a, ticker_b])]
     df.reset_index(drop=True, inplace=True)
 
-    cols_to_keep = ['ticker','tradeDate','iv30d','mktWidthVol']
+    cols_to_keep = ['ticker','tradeDate','orIvXern20d','mktWidthVol']
     df = df[cols_to_keep]
 
     df["tradeDate"] = pd.to_datetime(df["tradeDate"])
@@ -25,18 +25,18 @@ def get_comparison(df: pd.DataFrame, ticker_a, ticker_b):
     df = df[df.tradeDate > datetime.datetime.now() - pd.to_timedelta('200Day')]
 
     #Formating GME data and adding some columns)
-    df = pd.pivot_table(df, index = 'tradeDate', columns = 'ticker', values = ['ticker','tradeDate','iv30d','mktWidthVol']).reset_index()
+    df = pd.pivot_table(df, index = 'tradeDate', columns = 'ticker', values = ['ticker','tradeDate','orIvXern20d','mktWidthVol']).reset_index()
 
     #Calculating the metrics we wanna see
-    df['ratio'] = df['iv30d'][ticker_a] / df['iv30d'][ticker_b]
+    df['ratio'] = df['orIvXern20d'][ticker_a] / df['orIvXern20d'][ticker_b]
     df['meanRatio'] = abs(df['ratio'].rolling(40).mean())
-    df['absSpread'] = abs(df['iv30d'][ticker_a] - df['iv30d'][ticker_b])
+    df['absSpread'] = abs(df['orIvXern20d'][ticker_a] - df['orIvXern20d'][ticker_b])
     df['stdDev'] = df['ratio'].rolling(40).std()
     df['zScore'] = (df['ratio'] - df['meanRatio']) / df['stdDev']
     df['upBand'] = df['meanRatio'] + (df['stdDev'] * 3)
     df['downBand'] = df['meanRatio'] - (df['stdDev'] * 3)
-    df['upHurdle'] = df['upBand'] + (df['mktWidthVol'][ticker_b] / df['iv30d'][ticker_b])
-    df['downHurdle'] = df['downBand'] - (df['mktWidthVol'][ticker_b] / df['iv30d'][ticker_b])
+    df['upHurdle'] = df['upBand'] + (df['mktWidthVol'][ticker_b] / df['orIvXern20d'][ticker_b])
+    df['downHurdle'] = df['downBand'] - (df['mktWidthVol'][ticker_b] / df['orIvXern20d'][ticker_b])
 
     df.columns = df.columns.map('_'.join)
     return df

@@ -25,14 +25,17 @@ python correlation.py --n-days 60
 ```
 
 ## [`comparison.py`](./comparison.py)
-Compares ticker combinations over a certain correlation threshold. Generates formatted data and puts it in the `frontend/public/data` folder
+Compares ticker combinations over a certain correlation threshold. Generates formatted data and puts it in the `output/app_data` folder
 ```bash
 python comparison.py --corr-cutoff 0.95
 ```
 
+## [`firestore_upload.py`](./firestore_upload.py)
+Uploads the data in `output/app_data` to firebase's firestore (production).
+
 # Running the dashboard
 ```bash
-# in the frontend directory
+# in the webapp/frontend directory
 npm i
 npm run dev
 ```
