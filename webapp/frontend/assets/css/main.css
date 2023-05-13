@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.signature-gradient {
+  @apply bg-gradient-to-r from-green-600 via-80% via-orange-500 to-red-700;
+}
+
+html {
+  background-color: #111;
+  color: white;
+  font-family: Verdana, sans-serif;
+}
