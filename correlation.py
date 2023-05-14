@@ -13,7 +13,7 @@ def format_tickers(r):
     return ','.join(ordered)
 
 
-default_correlation_window = 60
+default_correlation_window = 120
 
 
 def get_correlation(n_days: int = default_correlation_window) -> pd.DataFrame:
