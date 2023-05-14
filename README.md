@@ -9,7 +9,7 @@ python full_update.py
 
 # Scripts
 ## [`fetch_data.py`](./fetch_data.py)
-Used to pull data from ORATS for all tickers stored in `tickers.txt`. We're making one api call per date, right now it's set to pull data for the last 60 day window.
+Used to pull data from ORATS for all tickers stored in `tickers.txt`. We're making one api call per date, right now it's set to pull data for the last 120 day window.
 https://docs.orats.io/datav2-api-guide/data.html#core-data-history
 ```bash
 python fetch_data.py
@@ -17,9 +17,9 @@ python fetch_data.py
 Writes full ticker history to `output/full.csv`.
 
 ## [`correlation.py`](./correlation.py)
-Computes correlation for all tickers and writes to `output/correlation.csv`
+Computes correlation for all tickers over the last 60 data points and writes to `output/correlation.csv`.
 ```bash
-python correlation.py --n-days 60
+python correlation.py
 ```
 
 ## [`comparison.py`](./comparison.py)

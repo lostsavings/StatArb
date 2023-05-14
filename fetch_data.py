@@ -32,9 +32,12 @@ def fetch_data():
 
     today = datetime.date.today()
     # how many days of history to fetch
-    history_length = 60
+    history_length = 120
     for i in tqdm(range(history_length)):
         date = today - datetime.timedelta(days=i)
+        # skip weekend days, they will have no data
+        if not date.weekday():
+            continue
         try:
             history = get_date_data(date)
         except requests.HTTPError as e:
