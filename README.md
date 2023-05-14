@@ -17,7 +17,7 @@ python fetch_data.py
 Writes full ticker history to `output/full.csv`.
 
 ## [`correlation.py`](./correlation.py)
-Computes correlation for all tickers over the last 60 data points and writes to `output/correlation.csv`.
+Computes correlation for all tickers over the last 120 data points and writes to `output/correlation.csv`.
 ```bash
 python correlation.py
 ```
