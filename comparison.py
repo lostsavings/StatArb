@@ -1,4 +1,3 @@
-import click
 import os
 import pandas as pd
 
@@ -65,8 +64,6 @@ def get_comparison_output_path(ticker_a, ticker_b):
 corr_cutoff_default = 0.95
 
 
-@click.command()
-@click.option('--corr-cutoff', default=corr_cutoff_default, help='(0-1) Run comparisons for all ticker pairs with a correlation over or at this cutoff.')
 def run_comparisons(corr_cutoff=corr_cutoff_default):
     os.makedirs(os.path.join('output', 'app_data'), exist_ok=True)
     os.makedirs(os.path.join('output', 'app_data', 'comparisons'), exist_ok=True)
