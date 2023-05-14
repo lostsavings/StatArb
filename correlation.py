@@ -1,7 +1,7 @@
 import os
 import click
 import pandas as pd
-from datetime import date, timedelta
+from datetime import timedelta
 
 
 def format_tickers(r):
@@ -14,9 +14,11 @@ def format_tickers(r):
     return ','.join(ordered)
 
 
+default_correlation_window = 50
+
 @click.command()
-@click.option('--n-days', default=60, help='Number of days of history when checking correlation.')
-def get_correlation(n_days: int) -> pd.DataFrame:
+@click.option('--n-days', default=default_correlation_window, help='Number of days of history when checking correlation.')
+def get_correlation(n_days: int = default_correlation_window) -> pd.DataFrame:
     """
     Use saved ORAT data to get correlation between all tickers over the last n days
     """
