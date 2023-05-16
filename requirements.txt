@@ -6,3 +6,4 @@ SQLAlchemy
 click
 matplotlib
 firebase-admin
+tqdm

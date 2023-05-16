@@ -1,18 +1,16 @@
 import os
-import click
 import pandas as pd
 import requests
+import datetime
+from tqdm import tqdm
 
-from db import get_db_con
 
-
-def get_history(ticker):
+def get_date_data(date: datetime.date):
     """Pull ticker history from ORAT api."""
     url = 'https://api.orats.io/datav2/hist/cores'
     params = {
         'token': '8ea8d461-2ce6-4bac-bf67-3f24647efbad',
-        'ticker': ticker,
-        # TODO: add trade dates?
+        'tradeDate': date.isoformat(),
         'fields': 'ticker,tradeDate,orIvXern20d,mktWidthVol,sector,sectorName'
     }
     res = requests.get(url, params=params)
@@ -28,20 +26,30 @@ def get_tickers():
         return list(set(tickers))
 
 
-@click.command()
-@click.option('--save-db', is_flag=True, help='Set this flag to save results to the database')
-def fetch_data(save_db):
+def fetch_data():
     tickers = get_tickers()
     df_full = pd.DataFrame()
-    for ticker in tickers:
-        history = get_history(ticker)
+
+    today = datetime.date.today()
+    # how many days of history to fetch
+    history_length = 120
+    for i in tqdm(range(history_length)):
+        date = today - datetime.timedelta(days=i)
+        # skip weekend days, they will have no data
+        if not date.weekday():
+            continue
+        try:
+            history = get_date_data(date)
+        except requests.HTTPError as e:
+            if e.response.status_code == 404:
+                # 404s are generally ok, we just don't have data for that day
+                continue
+            else:
+                raise e
         df = pd.DataFrame(history)
         df_full = pd.concat([df_full, df])
 
-    if save_db:
-        with get_db_con() as con:
-            df_full.to_sql('history', con, if_exists='replace', index=False)
-
+    df_full = df_full[df_full['ticker'].isin(tickers)].reset_index(drop=True)
     df_full.to_csv(os.path.join('output', 'full.csv'), index=False)
 
 

@@ -1,11 +1,9 @@
-import json
-import click
 import os
 import pandas as pd
 
-import pandas as pd
 import datetime
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 
 def get_comparison(df: pd.DataFrame, ticker_a, ticker_b):
@@ -63,16 +61,19 @@ def get_comparison_output_path(ticker_a, ticker_b):
     return os.path.join('output', 'app_data', 'comparisons', f'{ticker_a}_{ticker_b}.json')
 
 
-@click.command()
-@click.option('--corr-cutoff', default=0.95, help='(0-1) Run comparisons for all ticker pairs with a correlation over or at this cutoff.')
-def run_comparisons(corr_cutoff):
+corr_cutoff_default = 0.95
+
+
+def run_comparisons(corr_cutoff=corr_cutoff_default):
+    os.makedirs(os.path.join('output', 'app_data'), exist_ok=True)
+    os.makedirs(os.path.join('output', 'app_data', 'comparisons'), exist_ok=True)
     df_full = pd.read_csv(os.path.join('output', 'full.csv'))
     df_corr = pd.read_csv(os.path.join('output', 'correlation.csv'))
     df_corr = df_corr[df_corr['correlation'] >= corr_cutoff]
 
     # create dataframe tickers and zscores, save comparisons to a file
     df_zscores = pd.DataFrame()
-    for i, r in df_corr.iterrows():
+    for i, r in tqdm(df_corr.iterrows()):
         ticker_a = r.ticker_a
         ticker_b = r.ticker_b
         df_comp = get_comparison(df_full, ticker_a, ticker_b)
